@@ -1,0 +1,13 @@
+﻿using Model.DomainModels.FrameWorks.Bases;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Model.DomainModels.Pipeline
+{
+    public class Person : PersonBase
+    {
+    }
+}

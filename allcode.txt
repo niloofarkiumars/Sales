@@ -1,0 +1,1190 @@
+﻿===== D:\Educational\C#\FinalProject_V02\ApplicationService\Dtos\Person\GetPersonDto.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ApplicationService.Dtos.Person
+{
+    public class GetPersonDto
+    {
+        public int Id { get; set; }
+        public string? NationalId { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+    }
+}
+===== D:\Educational\C#\FinalProject_V02\ApplicationService\Dtos\Person\PostPersonDto.cs
+namespace ApplicationService.Dtos.Person
+{
+    public class PostPersonDto
+    {
+        public string? NationalId { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+    }
+}
+===== D:\Educational\C#\FinalProject_V02\ApplicationService\Dtos\Person\PutPersonDto.cs
+namespace ApplicationService.Dtos
+{
+    public class PutPersonDto
+    {
+        public string? NationalId { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+    }
+}
+===== D:\Educational\C#\FinalProject_V02\ApplicationService\Dtos\GetProductDto.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ApplicationService.Dtos
+{
+    public class GetProductDto
+    {
+        public int Id { get; set; }
+        public string? Code { get; set; }
+        public string? Title { get; set; }
+        public decimal UnitPrice { get; set; }
+        public int Quantity { get; set; }
+    }
+}
+===== D:\Educational\C#\FinalProject_V02\ApplicationService\Dtos\PostProductDto.cs
+namespace ApplicationService.Dtos.Person
+{
+    public class PostProductDto
+    {
+        public string? Code { get; set; }
+        public string? Title { get; set; }
+        public decimal? UnitPrice { get; set; }
+        public int? Quantity { get; set; }
+    }
+}
+===== D:\Educational\C#\FinalProject_V02\ApplicationService\Services\PersonServiceApplication.cs
+using ApplicationService.Dtos;
+using ApplicationService.Dtos.Person;
+using Model.DomainModels.Pipeline;
+using Model.ServiceModels;
+
+namespace ApplicationService.Services
+{
+    public class PersonServiceApplication
+    {
+          
+        private readonly PersonServiceModel _personServiceModel;
+        public PersonServiceApplication()
+        {
+            _personServiceModel = new PersonServiceModel();
+        }
+
+        #region [- GetAll() -]
+
+        public List<GetPersonDto> GetAll()
+        {
+            var persons = _personServiceModel.SelectAll();
+            var getPersonDtos = new List<GetPersonDto>();
+            foreach (var person in persons)
+            {
+                var getPersonDto = new GetPersonDto
+                {
+                    Id = person.Id,
+                    NationalId = person.NationalId,
+                    FirstName = person.FirstName,
+                    LastName = person.LastName
+                };
+                getPersonDtos.Add(getPersonDto);
+            }
+            return getPersonDtos;
+        }
+        #endregion
+
+        #region [- Post() -]
+
+        public void Post(PostPersonDto postPersonDto)
+        {
+            var person = new Person()
+            {
+                NationalId = postPersonDto.NationalId,
+                FirstName = postPersonDto.FirstName,
+                LastName = postPersonDto.LastName
+            };
+            _personServiceModel.Insert(person);
+        }
+        #endregion
+
+        #region [- Put() -]
+
+        public void Put(int id, PutPersonDto putPersonDto)
+        {
+            var person = new Person()
+            {
+                Id = id,
+                NationalId = putPersonDto.NationalId,
+                FirstName = putPersonDto.FirstName,
+                LastName = putPersonDto.LastName
+            };
+            _personServiceModel.Update(person);
+        }
+        #endregion
+
+        #region [- Delete() -]
+
+        public void Delete(int id)
+        {
+            _personServiceModel.Delete(id);
+        }
+        #endregion
+
+    }
+}
+
+===== D:\Educational\C#\FinalProject_V02\ApplicationService\Services\ProductServiceApplication.cs
+using ApplicationService.Dtos;
+using ApplicationService.Dtos.Person;
+using Model.DomainModels.Pipeline;
+using Model.ServiceModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ApplicationService.Services
+{
+    public class ProductApplicationService
+    {
+
+        private readonly ProductServiceModel _productServiceModel;
+
+        #region [- GetAll() -]
+
+        public List<GetProductDto> GetAll()
+        {
+            var products = _productServiceModel.SelectAll();
+            var getProductDtos = new List<GetProductDto>();
+            foreach (var product in products)
+            {
+                var getProductDto = new GetProductDto
+                {
+                    Id = product.Id,
+                    Code = product.Code,
+                    Title = product.Title,
+                    UnitPrice = product.UnitPrice,
+                    Quantity = product.Quantity
+                };
+                getProductDtos.Add(getProductDto);
+            }
+            return getProductDtos;
+        }
+        #endregion
+
+        #region [- Post() -]
+
+        /*public void Post(PostProductDto postProductDto)
+        {
+            var product = new Product()
+            {
+                Code = postProductDto.Code,
+                Title = postProductDto.Title,
+                UnitPrice = postProductDto.UnitPrice,
+                Quantity = postProductDto.Quantity
+            };
+            _productServiceModel.Insert(product);
+        }*/
+        #endregion
+
+    }
+
+}
+
+
+===== D:\Educational\C#\FinalProject_V02\ApplicationService\ApplicationService.csproj
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Model\Model.csproj" />
+  </ItemGroup>
+
+</Project>
+===== D:\Educational\C#\FinalProject_V02\Model\DomainModels\FrameWorks\Bases\PersonBase.cs
+using Model.DomainModels.FrameWorks.Contracts;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Model.DomainModels.FrameWorks.Bases
+{
+    public class PersonBase :IPerson
+    {
+        public int Id { get; set; }
+        public string? NationalId { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }   
+    }
+}
+===== D:\Educational\C#\FinalProject_V02\Model\DomainModels\FrameWorks\Bases\ProductBase.cs
+using Model.DomainModels.FrameWorks.Contracts;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Model.DomainModels.FrameWorks.Bases
+{
+    public class ProductBase : IProduct
+    {
+        public int Id { get; set; }
+        public string? Code { get; set; }
+        public string? Title { get; set; }
+        public decimal UnitPrice { get; set; }
+        public int Quantity { get; set; }   
+    }
+}
+===== D:\Educational\C#\FinalProject_V02\Model\DomainModels\FrameWorks\Contracts\IPerson.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Model.DomainModels.FrameWorks.Contracts
+{
+    public interface IPerson
+    {
+        int Id { get; set; }
+        string? NationalId { get; set; }
+        string? FirstName { get; set; }
+        string? LastName { get; set; }
+    }
+}
+===== D:\Educational\C#\FinalProject_V02\Model\DomainModels\FrameWorks\Contracts\IProduct.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Model.DomainModels.FrameWorks.Contracts
+{
+    public interface IProduct
+    {
+        int Id { get; set; }
+        string? Code { get; set; }
+        string? Title { get; set; }
+        decimal UnitPrice { get; set; }
+        int Quantity { get; set; }
+    }
+}
+===== D:\Educational\C#\FinalProject_V02\Model\DomainModels\Pipeline\Person.cs
+using Model.DomainModels.FrameWorks.Bases;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Model.DomainModels.Pipeline
+{
+    public class Person : PersonBase
+    {
+    }
+}
+===== D:\Educational\C#\FinalProject_V02\Model\DomainModels\Pipeline\Product.cs
+using Model.DomainModels.FrameWorks.Bases;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Model.DomainModels.Pipeline
+{
+    public class Product : ProductBase
+    {
+    }
+}
+===== D:\Educational\C#\FinalProject_V02\Model\ServiceModels\PersonServiceModel.cs
+using Model.DomainModels;
+using Model.DomainModels.Pipeline;
+
+namespace Model.ServiceModels
+{
+    public class PersonServiceModel
+    {
+        #region [ -Insert ()- ]
+        public void Insert(Person person)
+        {
+            using (var context = new ProjectDbContext())
+            {
+                    context.Add(person);
+                    context.SaveChanges();
+            }
+        }
+        #endregion
+
+        #region [ -Update ()- ]
+        public void Update(Person person)
+        {
+            using var context = new ProjectDbContext();
+            context.Update(person);
+            context.SaveChanges();
+        }
+        #endregion
+
+        #region [ -Delete ()- ]
+        public void Delete(int id)
+        {
+            using var context = new ProjectDbContext();
+            var person = context.Person.Find(id);
+            if (person is null) return;
+            context.Remove(person);
+            context.SaveChanges();
+        }
+        #endregion
+
+        #region [ -SelectAll ()- ]
+        public List<Person> SelectAll()
+        {
+            using (var context = new ProjectDbContext())
+            {
+                try
+                {
+                    var persons = context.Person.ToList();
+                    return persons;
+                }
+                catch (Exception ex)
+                {
+                    // Handle the exception (e.g., log it)
+                    throw new Exception("An error occurred while retrieving persons.", ex);
+                }
+                finally
+                {
+                    // Ensure the context is disposed of properly
+                    context.Dispose();
+                }
+            }
+        }
+        #endregion
+    }
+}
+===== D:\Educational\C#\FinalProject_V02\Model\ServiceModels\ProductServiceModel.cs
+using Model.DomainModels;
+using Model.DomainModels.Pipeline;
+
+namespace Model.ServiceModels
+{
+    public class ProductServiceModel
+    {
+
+        #region [ -Insert ()- ]
+        public void Insert(Product product)
+        {
+            using (var context = new ProjectDbContext())
+            {
+                context.Add(product);
+                context.SaveChanges();
+            }
+        }
+        #endregion
+
+        #region [ -Update ()- ]
+        public void Update(Product product)
+        {
+            using var context = new ProjectDbContext();
+            context.Update(product);
+            context.SaveChanges();
+        }
+        #endregion
+
+        #region [ -Delete ()- ]
+        public void Delete(int id)
+        {
+            using var context = new ProjectDbContext();
+            var product = context.Product.Find(id);
+            if (product is null) return;
+            context.Remove(product);
+            context.SaveChanges();
+        }
+        #endregion
+
+        #region [ -SelectAll ()- ]
+        public List<Product> SelectAll()
+        {
+            using (var context = new ProjectDbContext())
+            {
+                try
+                {
+                    var Products = context.Product.ToList();
+                    return Products;
+                }
+                catch (Exception ex)
+                {
+                    // Handle the exception (e.g., log it)
+                    throw new Exception("An error occurred while retrieving Products.", ex);
+                }
+                finally
+                {
+                    // Ensure the context is disposed of properly
+                    context.Dispose();
+                }
+            }
+        }
+        #endregion
+    }
+}
+===== D:\Educational\C#\FinalProject_V02\Model\Model.csproj
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.20">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.20" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.20">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>
+===== D:\Educational\C#\FinalProject_V02\Model\ProjectDbContext.cs
+
+using Microsoft.EntityFrameworkCore;
+using Model.DomainModels.Pipeline;
+using System;
+
+namespace Model
+{
+    public class ProjectDbContext : DbContext
+    {
+        
+
+        public DbSet<Product> Product => Set<Product>();
+        public DbSet<Person> Person => Set<Person>();
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(
+                @"Server=.;Database=FinalProject;Trusted_Connection=True;TrustServerCertificate=True;");
+        }
+    }
+}
+===== D:\Educational\C#\FinalProject_V02\View\PersonForm.cs
+using ApplicationService.Dtos;
+using ApplicationService.Dtos.Person;
+using ApplicationService.Services;
+
+namespace View
+{
+    public partial class PersonForm : Form
+    {
+        private readonly PersonServiceApplication _personApplicationService;
+
+        // null = adding a new person, otherwise = id of the person being edited
+        private int? _editingId;
+
+        private static readonly Color EditColor = Color.FromArgb(37, 99, 235);
+        private static readonly Color DeleteColor = Color.FromArgb(220, 38, 38);
+
+        public PersonForm()
+        {
+            InitializeComponent();
+            _personApplicationService = new PersonServiceApplication();
+        }
+
+        private void Form1_Load(object? sender, EventArgs e)
+        {
+            LoadData();
+        }
+
+        #region [- Buttons -]
+
+        private void btnBack_Click(object? sender, EventArgs e)
+        {
+            Close(); // later this returns to the main page
+        }
+
+        private void btnRefresh_Click(object? sender, EventArgs e)
+        {
+            ClearInputs();
+            LoadData();
+        }
+
+        private void btnSave_Click(object? sender, EventArgs e)
+        {
+            var nationalId = txtNationalId.Text.Trim();
+            var firstName = txtFirstName.Text.Trim();
+            var lastName = txtLastName.Text.Trim();
+
+            if (nationalId.Length == 0 || firstName.Length == 0 || lastName.Length == 0)
+            {
+                MessageBox.Show("Please fill in all three fields.", "Missing data",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                if (_editingId is int id)
+                {
+                    var putPersonDto = new PutPersonDto
+                    {
+                        NationalId = nationalId,
+                        FirstName = firstName,
+                        LastName = lastName
+                    };
+                    _personApplicationService.Put(id, putPersonDto);
+                    MessageBox.Show("Person updated successfully.");
+                }
+                else
+                {
+                    var postPersonDto = new PostPersonDto
+                    {
+                        NationalId = nationalId,
+                        FirstName = firstName,
+                        LastName = lastName
+                    };
+                    _personApplicationService.Post(postPersonDto);
+                    MessageBox.Show("Person saved successfully.");
+                }
+
+                ClearInputs();
+                LoadData();
+            }
+            catch (Exception ex)
+            {
+                ShowError(ex);
+            }
+        }
+        #endregion
+
+        #region [- Grid -]
+
+        private void dgvPerson_CellClick(object? sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
+            if (dgvPerson.Rows[e.RowIndex].DataBoundItem is not GetPersonDto person) return;
+
+            if (e.ColumnIndex == colEdit.Index) StartEdit(person);
+            else if (e.ColumnIndex == colDelete.Index) DeletePerson(person);
+        }
+
+        // Draws the edit / delete icons inside the cells
+        private void dgvPerson_CellPainting(object? sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
+
+            bool isEdit = e.ColumnIndex == colEdit.Index;
+            bool isDelete = e.ColumnIndex == colDelete.Index;
+            if (!isEdit && !isDelete) return;
+
+            e.Paint(e.CellBounds, DataGridViewPaintParts.Background
+                                | DataGridViewPaintParts.Border
+                                | DataGridViewPaintParts.SelectionBackground);
+
+            using var font = new Font("Segoe MDL2 Assets", 12F);
+            TextRenderer.DrawText(e.Graphics!, isEdit ? "\uE70F" : "\uE74D", font, e.CellBounds,
+                isEdit ? EditColor : DeleteColor,
+                TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
+
+            e.Handled = true;
+        }
+
+        private void dgvPerson_CellMouseEnter(object? sender, DataGridViewCellEventArgs e)
+        {
+            bool isAction = e.RowIndex >= 0 &&
+                            (e.ColumnIndex == colEdit.Index || e.ColumnIndex == colDelete.Index);
+            dgvPerson.Cursor = isAction ? Cursors.Hand : Cursors.Default;
+        }
+
+        private void dgvPerson_CellMouseLeave(object? sender, DataGridViewCellEventArgs e)
+        {
+            dgvPerson.Cursor = Cursors.Default;
+        }
+
+        private void dgvPerson_DataBindingComplete(object? sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            foreach (DataGridViewRow row in dgvPerson.Rows)
+            {
+                row.Cells[colEdit.Index].ToolTipText = "Edit";
+                row.Cells[colDelete.Index].ToolTipText = "Delete";
+            }
+            dgvPerson.ClearSelection();
+        }
+        #endregion
+
+        #region [- Helpers -]
+
+        private void LoadData()
+        {
+            try
+            {
+                dgvPerson.DataSource = _personApplicationService.GetAll();
+            }
+            catch (Exception ex)
+            {
+                ShowError(ex);
+            }
+        }
+
+        private void StartEdit(GetPersonDto person)
+        {
+            _editingId = person.Id;
+            txtNationalId.Text = person.NationalId;
+            txtFirstName.Text = person.FirstName;
+            txtLastName.Text = person.LastName;
+            btnSave.Text = "Update";
+            txtNationalId.Focus();
+        }
+
+        private void DeletePerson(GetPersonDto person)
+        {
+            var answer = MessageBox.Show($"Delete {person.FirstName} {person.LastName}?", "Confirm delete",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (answer != DialogResult.Yes) return;
+
+            try
+            {
+                _personApplicationService.Delete(person.Id);
+                if (_editingId == person.Id) ClearInputs();
+                LoadData();
+            }
+            catch (Exception ex)
+            {
+                ShowError(ex);
+            }
+        }
+
+        private void ClearInputs()
+        {
+            _editingId = null;
+            txtNationalId.Clear();
+            txtFirstName.Clear();
+            txtLastName.Clear();
+            btnSave.Text = "Save";
+        }
+
+        private static void ShowError(Exception ex)
+        {
+            MessageBox.Show(ex.GetBaseException().Message, "Error",
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+        #endregion
+    }
+}
+===== D:\Educational\C#\FinalProject_V02\View\PersonForm.Designer.cs
+namespace View
+{
+    partial class PersonForm
+    {
+        /// <summary>
+        ///  Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        ///  Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        ///  Required method for Designer support - do not modify
+        ///  the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            components = new System.ComponentModel.Container();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            pnlHeader = new Panel();
+            btnRefresh = new Button();
+            lblTitle = new Label();
+            btnBack = new Button();
+            pnlBody = new Panel();
+            dgvPerson = new DataGridView();
+            colId = new DataGridViewTextBoxColumn();
+            colNationalId = new DataGridViewTextBoxColumn();
+            colFirstName = new DataGridViewTextBoxColumn();
+            colLastName = new DataGridViewTextBoxColumn();
+            colEdit = new DataGridViewButtonColumn();
+            colDelete = new DataGridViewButtonColumn();
+            pnlSpacer = new Panel();
+            pnlInput = new Panel();
+            btnSave = new Button();
+            txtLastName = new TextBox();
+            txtFirstName = new TextBox();
+            txtNationalId = new TextBox();
+            lblLastName = new Label();
+            lblFirstName = new Label();
+            lblNationalId = new Label();
+            toolTip1 = new ToolTip(components);
+            pnlHeader.SuspendLayout();
+            pnlBody.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvPerson).BeginInit();
+            pnlInput.SuspendLayout();
+            SuspendLayout();
+            // 
+            // pnlHeader
+            // 
+            pnlHeader.BackColor = Color.FromArgb(37, 99, 235);
+            pnlHeader.Controls.Add(btnRefresh);
+            pnlHeader.Controls.Add(lblTitle);
+            pnlHeader.Controls.Add(btnBack);
+            pnlHeader.Dock = DockStyle.Top;
+            pnlHeader.Location = new Point(0, 0);
+            pnlHeader.Name = "pnlHeader";
+            pnlHeader.Size = new Size(900, 64);
+            pnlHeader.TabIndex = 1;
+            // 
+            // btnRefresh
+            // 
+            btnRefresh.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnRefresh.BackColor = Color.Transparent;
+            btnRefresh.Cursor = Cursors.Hand;
+            btnRefresh.FlatAppearance.BorderSize = 0;
+            btnRefresh.FlatAppearance.MouseDownBackColor = Color.FromArgb(30, 64, 175);
+            btnRefresh.FlatAppearance.MouseOverBackColor = Color.FromArgb(29, 78, 216);
+            btnRefresh.FlatStyle = FlatStyle.Flat;
+            btnRefresh.Font = new Font("Segoe MDL2 Assets", 14F);
+            btnRefresh.ForeColor = Color.White;
+            btnRefresh.Location = new Point(840, 8);
+            btnRefresh.Name = "btnRefresh";
+            btnRefresh.Size = new Size(48, 48);
+            btnRefresh.TabIndex = 2;
+            btnRefresh.Text = "";
+            toolTip1.SetToolTip(btnRefresh, "Refresh");
+            btnRefresh.UseVisualStyleBackColor = false;
+            btnRefresh.Click += btnRefresh_Click;
+            // 
+            // lblTitle
+            // 
+            lblTitle.AutoSize = true;
+            lblTitle.Font = new Font("Segoe UI Semibold", 16F);
+            lblTitle.ForeColor = Color.White;
+            lblTitle.Location = new Point(70, 14);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new Size(112, 37);
+            lblTitle.TabIndex = 1;
+            lblTitle.Text = "Persons";
+            // 
+            // btnBack
+            // 
+            btnBack.BackColor = Color.Transparent;
+            btnBack.Cursor = Cursors.Hand;
+            btnBack.FlatAppearance.BorderSize = 0;
+            btnBack.FlatAppearance.MouseDownBackColor = Color.FromArgb(30, 64, 175);
+            btnBack.FlatAppearance.MouseOverBackColor = Color.FromArgb(29, 78, 216);
+            btnBack.FlatStyle = FlatStyle.Flat;
+            btnBack.Font = new Font("Segoe MDL2 Assets", 14F);
+            btnBack.ForeColor = Color.White;
+            btnBack.Location = new Point(12, 8);
+            btnBack.Name = "btnBack";
+            btnBack.Size = new Size(48, 48);
+            btnBack.TabIndex = 0;
+            btnBack.Text = "";
+            toolTip1.SetToolTip(btnBack, "Back");
+            btnBack.UseVisualStyleBackColor = false;
+            btnBack.Click += btnBack_Click;
+            // 
+            // pnlBody
+            // 
+            pnlBody.BackColor = Color.FromArgb(243, 244, 246);
+            pnlBody.Controls.Add(dgvPerson);
+            pnlBody.Controls.Add(pnlSpacer);
+            pnlBody.Controls.Add(pnlInput);
+            pnlBody.Dock = DockStyle.Fill;
+            pnlBody.Location = new Point(0, 64);
+            pnlBody.Name = "pnlBody";
+            pnlBody.Padding = new Padding(20);
+            pnlBody.Size = new Size(900, 536);
+            pnlBody.TabIndex = 0;
+            // 
+            // dgvPerson
+            // 
+            dgvPerson.AllowUserToAddRows = false;
+            dgvPerson.AllowUserToDeleteRows = false;
+            dgvPerson.AllowUserToResizeRows = false;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(249, 250, 251);
+            dgvPerson.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dgvPerson.BackgroundColor = Color.White;
+            dgvPerson.BorderStyle = BorderStyle.None;
+            dgvPerson.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dgvPerson.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(249, 250, 251);
+            dataGridViewCellStyle2.Font = new Font("Segoe UI Semibold", 10F);
+            dataGridViewCellStyle2.ForeColor = Color.FromArgb(107, 114, 128);
+            dataGridViewCellStyle2.Padding = new Padding(8, 0, 0, 0);
+            dataGridViewCellStyle2.SelectionBackColor = Color.FromArgb(249, 250, 251);
+            dataGridViewCellStyle2.SelectionForeColor = Color.FromArgb(107, 114, 128);
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            dgvPerson.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dgvPerson.ColumnHeadersHeight = 42;
+            dgvPerson.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dgvPerson.Columns.AddRange(new DataGridViewColumn[] { colId, colNationalId, colFirstName, colLastName, colEdit, colDelete });
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = Color.White;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle3.ForeColor = Color.FromArgb(31, 41, 55);
+            dataGridViewCellStyle3.Padding = new Padding(8, 0, 0, 0);
+            dataGridViewCellStyle3.SelectionBackColor = Color.FromArgb(219, 234, 254);
+            dataGridViewCellStyle3.SelectionForeColor = Color.FromArgb(31, 41, 55);
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
+            dgvPerson.DefaultCellStyle = dataGridViewCellStyle3;
+            dgvPerson.Dock = DockStyle.Fill;
+            dgvPerson.EnableHeadersVisualStyles = false;
+            dgvPerson.GridColor = Color.FromArgb(229, 231, 235);
+            dgvPerson.Location = new Point(20, 146);
+            dgvPerson.MultiSelect = false;
+            dgvPerson.Name = "dgvPerson";
+            dgvPerson.ReadOnly = true;
+            dgvPerson.RowHeadersVisible = false;
+            dgvPerson.RowHeadersWidth = 51;
+            dgvPerson.RowTemplate.Height = 40;
+            dgvPerson.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvPerson.Size = new Size(860, 370);
+            dgvPerson.TabIndex = 2;
+            dgvPerson.CellClick += dgvPerson_CellClick;
+            dgvPerson.CellMouseEnter += dgvPerson_CellMouseEnter;
+            dgvPerson.CellMouseLeave += dgvPerson_CellMouseLeave;
+            dgvPerson.CellPainting += dgvPerson_CellPainting;
+            dgvPerson.DataBindingComplete += dgvPerson_DataBindingComplete;
+            // 
+            // colId
+            // 
+            colId.DataPropertyName = "Id";
+            colId.HeaderText = "Id";
+            colId.MinimumWidth = 6;
+            colId.Name = "colId";
+            colId.ReadOnly = true;
+            colId.Visible = false;
+            // 
+            // colNationalId
+            // 
+            colNationalId.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            colNationalId.DataPropertyName = "NationalId";
+            colNationalId.HeaderText = "National ID";
+            colNationalId.MinimumWidth = 6;
+            colNationalId.Name = "colNationalId";
+            colNationalId.ReadOnly = true;
+            // 
+            // colFirstName
+            // 
+            colFirstName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            colFirstName.DataPropertyName = "FirstName";
+            colFirstName.HeaderText = "First Name";
+            colFirstName.MinimumWidth = 6;
+            colFirstName.Name = "colFirstName";
+            colFirstName.ReadOnly = true;
+            // 
+            // colLastName
+            // 
+            colLastName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            colLastName.DataPropertyName = "LastName";
+            colLastName.HeaderText = "Last Name";
+            colLastName.MinimumWidth = 6;
+            colLastName.Name = "colLastName";
+            colLastName.ReadOnly = true;
+            // 
+            // colEdit
+            // 
+            colEdit.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            colEdit.HeaderText = "";
+            colEdit.MinimumWidth = 6;
+            colEdit.Name = "colEdit";
+            colEdit.ReadOnly = true;
+            colEdit.Resizable = DataGridViewTriState.False;
+            colEdit.Width = 60;
+            // 
+            // colDelete
+            // 
+            colDelete.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            colDelete.HeaderText = "";
+            colDelete.MinimumWidth = 6;
+            colDelete.Name = "colDelete";
+            colDelete.ReadOnly = true;
+            colDelete.Resizable = DataGridViewTriState.False;
+            colDelete.Width = 60;
+            // 
+            // pnlSpacer
+            // 
+            pnlSpacer.BackColor = Color.FromArgb(243, 244, 246);
+            pnlSpacer.Dock = DockStyle.Top;
+            pnlSpacer.Location = new Point(20, 130);
+            pnlSpacer.Name = "pnlSpacer";
+            pnlSpacer.Size = new Size(860, 16);
+            pnlSpacer.TabIndex = 1;
+            // 
+            // pnlInput
+            // 
+            pnlInput.BackColor = Color.White;
+            pnlInput.Controls.Add(btnSave);
+            pnlInput.Controls.Add(txtLastName);
+            pnlInput.Controls.Add(txtFirstName);
+            pnlInput.Controls.Add(txtNationalId);
+            pnlInput.Controls.Add(lblLastName);
+            pnlInput.Controls.Add(lblFirstName);
+            pnlInput.Controls.Add(lblNationalId);
+            pnlInput.Dock = DockStyle.Top;
+            pnlInput.Location = new Point(20, 20);
+            pnlInput.Name = "pnlInput";
+            pnlInput.Size = new Size(860, 110);
+            pnlInput.TabIndex = 0;
+            // 
+            // btnSave
+            // 
+            btnSave.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnSave.BackColor = Color.FromArgb(22, 163, 74);
+            btnSave.Cursor = Cursors.Hand;
+            btnSave.FlatAppearance.BorderSize = 0;
+            btnSave.FlatAppearance.MouseOverBackColor = Color.FromArgb(21, 128, 61);
+            btnSave.FlatStyle = FlatStyle.Flat;
+            btnSave.ForeColor = Color.White;
+            btnSave.Location = new Point(740, 43);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(100, 33);
+            btnSave.TabIndex = 6;
+            btnSave.Text = "Save";
+            btnSave.UseVisualStyleBackColor = false;
+            btnSave.Click += btnSave_Click;
+            // 
+            // txtLastName
+            // 
+            txtLastName.BorderStyle = BorderStyle.FixedSingle;
+            txtLastName.Location = new Point(500, 46);
+            txtLastName.Name = "txtLastName";
+            txtLastName.Size = new Size(220, 27);
+            txtLastName.TabIndex = 5;
+            // 
+            // txtFirstName
+            // 
+            txtFirstName.BorderStyle = BorderStyle.FixedSingle;
+            txtFirstName.Location = new Point(260, 46);
+            txtFirstName.Name = "txtFirstName";
+            txtFirstName.Size = new Size(220, 27);
+            txtFirstName.TabIndex = 4;
+            // 
+            // txtNationalId
+            // 
+            txtNationalId.BorderStyle = BorderStyle.FixedSingle;
+            txtNationalId.Location = new Point(20, 46);
+            txtNationalId.Name = "txtNationalId";
+            txtNationalId.Size = new Size(220, 27);
+            txtNationalId.TabIndex = 3;
+            // 
+            // lblLastName
+            // 
+            lblLastName.AutoSize = true;
+            lblLastName.ForeColor = Color.FromArgb(107, 114, 128);
+            lblLastName.Location = new Point(500, 18);
+            lblLastName.Name = "lblLastName";
+            lblLastName.Size = new Size(79, 20);
+            lblLastName.TabIndex = 2;
+            lblLastName.Text = "Last Name";
+            // 
+            // lblFirstName
+            // 
+            lblFirstName.AutoSize = true;
+            lblFirstName.ForeColor = Color.FromArgb(107, 114, 128);
+            lblFirstName.Location = new Point(260, 18);
+            lblFirstName.Name = "lblFirstName";
+            lblFirstName.Size = new Size(80, 20);
+            lblFirstName.TabIndex = 1;
+            lblFirstName.Text = "First Name";
+            // 
+            // lblNationalId
+            // 
+            lblNationalId.AutoSize = true;
+            lblNationalId.ForeColor = Color.FromArgb(107, 114, 128);
+            lblNationalId.Location = new Point(20, 18);
+            lblNationalId.Name = "lblNationalId";
+            lblNationalId.Size = new Size(85, 20);
+            lblNationalId.TabIndex = 0;
+            lblNationalId.Text = "National ID";
+            // 
+            // Form1
+            // 
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(243, 244, 246);
+            ClientSize = new Size(900, 600);
+            Controls.Add(pnlBody);
+            Controls.Add(pnlHeader);
+            MinimumSize = new Size(760, 480);
+            Name = "Form1";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Persons";
+            Load += Form1_Load;
+            pnlHeader.ResumeLayout(false);
+            pnlHeader.PerformLayout();
+            pnlBody.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvPerson).EndInit();
+            pnlInput.ResumeLayout(false);
+            pnlInput.PerformLayout();
+            ResumeLayout(false);
+        }
+
+        #endregion
+
+        private Panel pnlHeader;
+        private Button btnBack;
+        private Label lblTitle;
+        private Button btnRefresh;
+        private Panel pnlBody;
+        private Panel pnlSpacer;
+        private Panel pnlInput;
+        private Label lblNationalId;
+        private Label lblFirstName;
+        private Label lblLastName;
+        private TextBox txtNationalId;
+        private TextBox txtFirstName;
+        private TextBox txtLastName;
+        private Button btnSave;
+        private DataGridView dgvPerson;
+        private DataGridViewTextBoxColumn colId;
+        private DataGridViewTextBoxColumn colNationalId;
+        private DataGridViewTextBoxColumn colFirstName;
+        private DataGridViewTextBoxColumn colLastName;
+        private DataGridViewButtonColumn colEdit;
+        private DataGridViewButtonColumn colDelete;
+        private ToolTip toolTip1;
+    }
+}
+===== D:\Educational\C#\FinalProject_V02\View\ProductForm.cs
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace View
+{
+    public partial class ProductForm : Form
+    {
+        public ProductForm()
+        {
+            InitializeComponent();
+        }
+    }
+}
+===== D:\Educational\C#\FinalProject_V02\View\ProductForm.Designer.cs
+namespace View
+{
+    partial class ProductForm
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.components = new System.ComponentModel.Container();
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Text = "ProductForm";
+        }
+
+        #endregion
+    }
+}
+===== D:\Educational\C#\FinalProject_V02\View\Program.cs
+namespace View
+{
+    internal static class Program
+    {
+        /// <summary>
+        ///  The main entry point for the application.
+        /// </summary>
+        [STAThread]
+        static void Main()
+        {
+            // To customize application configuration such as set high DPI settings or default font,
+            // see https://aka.ms/applicationconfiguration.
+            ApplicationConfiguration.Initialize();
+            Application.Run(new PersonForm());
+        }
+    }
+}
+===== D:\Educational\C#\FinalProject_V02\View\View.csproj
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.20">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.20" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.20">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ApplicationService\ApplicationService.csproj" />
+  </ItemGroup>
+
+</Project>
