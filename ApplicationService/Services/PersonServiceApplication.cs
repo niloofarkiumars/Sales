@@ -1,6 +1,7 @@
 ﻿using ApplicationService.Dtos.Person;
 using Model.DomainModels;
 using Model.ServiceModels;
+using ApplicationService.Validators;
 
 namespace ApplicationService.Services
 {
@@ -52,6 +53,10 @@ namespace ApplicationService.Services
         {
             try
             {
+                PersonValidator.Validate(
+                postPersonDto.NationalId,
+                postPersonDto.FirstName,
+                postPersonDto.LastName);
                 var person = new Person()
                 {
                     NationalId = postPersonDto.NationalId,
@@ -60,9 +65,14 @@ namespace ApplicationService.Services
                 };
                 _personServiceModel.Insert(person);
             }
+            catch (ArgumentException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while saving the person.", ex);
+                throw new Exception(
+                    "An error occurred while saving the product.", ex);
             }
             finally
             {
@@ -77,6 +87,10 @@ namespace ApplicationService.Services
         {
             try
             {
+                PersonValidator.Validate(
+                putPersonDto.NationalId,
+                putPersonDto.FirstName,
+                putPersonDto.LastName);
                 var person = new Person()
                 {
                     Id = id,
@@ -86,9 +100,14 @@ namespace ApplicationService.Services
                 };
                 _personServiceModel.Update(person);
             }
+            catch (ArgumentException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the person.", ex);
+                throw new Exception(
+                    "An error occurred while saving the product.", ex);
             }
             finally
             {

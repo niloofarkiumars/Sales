@@ -1,5 +1,7 @@
 ﻿using ApplicationService.Dtos.Product;
 using ApplicationService.Services;
+using View.Helpers;
+using System.Globalization;
 
 namespace View
 {
@@ -16,6 +18,8 @@ namespace View
         public ProductForm()
         {
             InitializeComponent();
+            txtQuantity.KeyPress += InputValidationHelper.AllowDigitsOnly;
+            txtUnitPrice.KeyPress += InputValidationHelper.AllowDecimal;
             dgvProduct.AutoGenerateColumns = false;
             _productServiceApplication = new ProductServiceApplication();
         }
@@ -50,10 +54,9 @@ namespace View
                 return;
             }
 
-            if (!decimal.TryParse(txtUnitPrice.Text.Trim(), out var unitPrice) || unitPrice < 0)
+            if (!decimal.TryParse( txtUnitPrice.Text.Trim(), NumberStyles.AllowDecimalPoint,CultureInfo.CurrentCulture,out var unitPrice) || unitPrice < 0)
             {
-                MessageBox.Show("Unit price must be a valid number (0 or more).", "Invalid data",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Enter a valid non-negative price.");
                 txtUnitPrice.Focus();
                 return;
             }
@@ -177,7 +180,7 @@ namespace View
             _editingId = product.Id;
             txtCode.Text = product.Code;
             txtTitle.Text = product.Title;
-            txtUnitPrice.Text = product.UnitPrice.ToString();
+            txtUnitPrice.Text = product.UnitPrice.ToString(CultureInfo.CurrentCulture);
             txtQuantity.Text = product.Quantity.ToString();
             btnSave.Text = "Update";
             txtCode.Focus();

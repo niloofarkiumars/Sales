@@ -1,6 +1,7 @@
 ﻿using ApplicationService.Dtos.Product;
 using Model.DomainModels;
 using Model.ServiceModels;
+using ApplicationService.Validators;
 
 namespace ApplicationService.Services
 {
@@ -53,6 +54,11 @@ namespace ApplicationService.Services
         {
             try
             {
+                ProductValidator.Validate(
+                postProductDto.Code,
+                postProductDto.Title,
+                postProductDto.UnitPrice,
+                postProductDto.Quantity);
                 var product = new Product()
                 {
                     Code = postProductDto.Code,
@@ -62,9 +68,14 @@ namespace ApplicationService.Services
                 };
                 _productServiceModel.Insert(product);
             }
+            catch (ArgumentException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while saving the product.", ex);
+                throw new Exception(
+                    "An error occurred while saving the product.", ex);
             }
             finally
             {
@@ -79,6 +90,11 @@ namespace ApplicationService.Services
         {
             try
             {
+                ProductValidator.Validate(
+                putProductDto.Code,
+                putProductDto.Title,
+                putProductDto.UnitPrice,
+                putProductDto.Quantity);
                 var product = new Product()
                 {
                     Id = id,
@@ -89,9 +105,14 @@ namespace ApplicationService.Services
                 };
                 _productServiceModel.Update(product);
             }
+            catch (ArgumentException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the product.", ex);
+                throw new Exception(
+                    "An error occurred while saving the product.", ex);
             }
             finally
             {

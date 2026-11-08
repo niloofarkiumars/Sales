@@ -1,6 +1,7 @@
 
 using ApplicationService.Dtos.Person;
 using ApplicationService.Services;
+using View.Helpers;
 
 namespace View
 {
@@ -17,6 +18,9 @@ namespace View
         public PersonForm()
         {
             InitializeComponent();
+            txtNationalId.KeyPress +=InputValidationHelper.AllowDigitsOnly;
+            txtFirstName.KeyPress += InputValidationHelper.AllowLettersSpacesAndDots;
+            txtLastName.KeyPress += InputValidationHelper.AllowLettersSpacesAndDots;
             dgvPerson.AutoGenerateColumns = false;
             _personApplicationService = new PersonServiceApplication();
         }
@@ -41,7 +45,7 @@ namespace View
 
         private void btnSave_Click(object? sender, EventArgs e)
         {
-            var nationalId = txtNationalId.Text.Trim();
+            var nationalId = txtNationalId.Text;
             var firstName = txtFirstName.Text.Trim();
             var lastName = txtLastName.Text.Trim();
 
