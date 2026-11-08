@@ -1,5 +1,4 @@
 ﻿using Model.DomainModels;
-using Model.DomainModels.Pipeline;
 
 namespace Model.ServiceModels
 {
@@ -27,11 +26,9 @@ namespace Model.ServiceModels
         #endregion
 
         #region [ -Delete ()- ]
-        public void Delete(int id)
+        public void Delete(Product product)
         {
             using var context = new ProjectDbContext();
-            var product = context.Product.Find(id);
-            if (product is null) return;
             context.Remove(product);
             context.SaveChanges();
         }

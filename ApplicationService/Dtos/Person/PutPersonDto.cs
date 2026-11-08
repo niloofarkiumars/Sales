@@ -1,4 +1,4 @@
-﻿namespace ApplicationService.Dtos
+﻿namespace ApplicationService.Dtos.Person
 {
     public class PutPersonDto
     {

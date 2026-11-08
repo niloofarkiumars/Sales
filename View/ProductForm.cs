@@ -191,7 +191,8 @@ namespace View
 
             try
             {
-                _productServiceApplication.Delete(product.Id);
+                var deleteProductDto = new DeleteProductDto { Id = product.Id };
+                _productServiceApplication.Delete(deleteProductDto);
                 if (_editingId == product.Id) ClearInputs();
                 LoadData();
             }
@@ -213,8 +214,12 @@ namespace View
 
         private static void ShowError(Exception ex)
         {
-            MessageBox.Show(ex.GetBaseException().Message, "Error",
-                MessageBoxButtons.OK, MessageBoxIcon.Error);
+            var baseMessage = ex.GetBaseException().Message;
+            var message = ex.Message == baseMessage
+                ? baseMessage
+                : ex.Message + Environment.NewLine + Environment.NewLine + baseMessage;
+
+            MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         #endregion
     }

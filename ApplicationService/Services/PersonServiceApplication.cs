@@ -1,13 +1,12 @@
-﻿using ApplicationService.Dtos;
-using ApplicationService.Dtos.Person;
-using Model.DomainModels.Pipeline;
+﻿using ApplicationService.Dtos.Person;
+using Model.DomainModels;
 using Model.ServiceModels;
 
 namespace ApplicationService.Services
 {
     public class PersonServiceApplication
     {
-          
+
         private readonly PersonServiceModel _personServiceModel;
         public PersonServiceApplication()
         {
@@ -18,20 +17,32 @@ namespace ApplicationService.Services
 
         public List<GetPersonDto> GetAll()
         {
-            var persons = _personServiceModel.SelectAll();
-            var getPersonDtos = new List<GetPersonDto>();
-            foreach (var person in persons)
+            try
             {
-                var getPersonDto = new GetPersonDto
+                var persons = _personServiceModel.SelectAll();
+                var getPersonDtos = new List<GetPersonDto>();
+                foreach (var person in persons)
                 {
-                    Id = person.Id,
-                    NationalId = person.NationalId,
-                    FirstName = person.FirstName,
-                    LastName = person.LastName
-                };
-                getPersonDtos.Add(getPersonDto);
+                    var getPersonDto = new GetPersonDto
+                    {
+                        Id = person.Id,
+                        NationalId = person.NationalId,
+                        FirstName = person.FirstName,
+                        LastName = person.LastName
+                    };
+                    getPersonDtos.Add(getPersonDto);
+                }
+                return getPersonDtos;
             }
-            return getPersonDtos;
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while loading the persons.", ex);
+            }
+            finally
+            {
+                // Nothing to dispose here (the DbContext is disposed in PersonServiceModel).
+                // A good place for logging or cleanup later.
+            }
         }
         #endregion
 
@@ -39,13 +50,24 @@ namespace ApplicationService.Services
 
         public void Post(PostPersonDto postPersonDto)
         {
-            var person = new Person()
+            try
             {
-                NationalId = postPersonDto.NationalId,
-                FirstName = postPersonDto.FirstName,
-                LastName = postPersonDto.LastName
-            };
-            _personServiceModel.Insert(person);
+                var person = new Person()
+                {
+                    NationalId = postPersonDto.NationalId,
+                    FirstName = postPersonDto.FirstName,
+                    LastName = postPersonDto.LastName
+                };
+                _personServiceModel.Insert(person);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while saving the person.", ex);
+            }
+            finally
+            {
+                // Nothing to dispose here.
+            }
         }
         #endregion
 
@@ -53,25 +75,50 @@ namespace ApplicationService.Services
 
         public void Put(int id, PutPersonDto putPersonDto)
         {
-            var person = new Person()
+            try
             {
-                Id = id,
-                NationalId = putPersonDto.NationalId,
-                FirstName = putPersonDto.FirstName,
-                LastName = putPersonDto.LastName
-            };
-            _personServiceModel.Update(person);
+                var person = new Person()
+                {
+                    Id = id,
+                    NationalId = putPersonDto.NationalId,
+                    FirstName = putPersonDto.FirstName,
+                    LastName = putPersonDto.LastName
+                };
+                _personServiceModel.Update(person);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while updating the person.", ex);
+            }
+            finally
+            {
+                // Nothing to dispose here.
+            }
         }
         #endregion
 
         #region [- Delete() -]
 
-        public void Delete(int id)
+        public void Delete(DeletePersonDto deletePersonDto)
         {
-            _personServiceModel.Delete(id);
+            try
+            {
+                var person = new Person()
+                {
+                    Id = deletePersonDto.Id
+                };
+                _personServiceModel.Delete(person);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while deleting the person.", ex);
+            }
+            finally
+            {
+                // Nothing to dispose here.
+            }
         }
         #endregion
 
     }
 }
-

@@ -1,6 +1,6 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
-using Model.DomainModels.Pipeline;
+using Model.DomainModels;
 using System;
 
 namespace Model

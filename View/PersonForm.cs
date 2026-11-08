@@ -1,4 +1,4 @@
-using ApplicationService.Dtos;
+
 using ApplicationService.Dtos.Person;
 using ApplicationService.Services;
 
@@ -174,7 +174,8 @@ namespace View
 
             try
             {
-                _personApplicationService.Delete(person.Id);
+                var deletePersonDto = new DeletePersonDto { Id = person.Id };
+                _personApplicationService.Delete(deletePersonDto);
                 if (_editingId == person.Id) ClearInputs();
                 LoadData();
             }
@@ -195,8 +196,12 @@ namespace View
 
         private static void ShowError(Exception ex)
         {
-            MessageBox.Show(ex.GetBaseException().Message, "Error",
-                MessageBoxButtons.OK, MessageBoxIcon.Error);
+            var baseMessage = ex.GetBaseException().Message;
+            var message = ex.Message == baseMessage
+                ? baseMessage
+                : ex.Message + Environment.NewLine + Environment.NewLine + baseMessage;
+
+            MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         #endregion
     }
