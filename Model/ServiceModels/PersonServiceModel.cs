@@ -1,60 +1,87 @@
-﻿using Model.DomainModels;
+﻿
+using Model.DomainModels;
 
 namespace Model.ServiceModels
 {
     public class PersonServiceModel
     {
         #region [ -Insert ()- ]
+
         public void Insert(Person person)
         {
-            using (var context = new ProjectDbContext())
+            try
             {
-                    context.Add(person);
-                    context.SaveChanges();
+                using var context = new ProjectDbContext();
+
+                context.Add(person);
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "An error occurred while inserting the person.", ex);
             }
         }
+
         #endregion
 
         #region [ -Update ()- ]
+
         public void Update(Person person)
         {
-            using var context = new ProjectDbContext();
-            context.Update(person);
-            context.SaveChanges();
+            try
+            {
+                using var context = new ProjectDbContext();
+
+                context.Update(person);
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "An error occurred while updating the person.", ex);
+            }
         }
+
         #endregion
 
         #region [ -Delete ()- ]
+
         public void Delete(Person person)
         {
-            using var context = new ProjectDbContext();
-            context.Remove(person);
-            context.SaveChanges();
+            try
+            {
+                using var context = new ProjectDbContext();
+
+                context.Remove(person);
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "An error occurred while deleting the person.", ex);
+            }
         }
+
         #endregion
 
         #region [ -SelectAll ()- ]
+
         public List<Person> SelectAll()
         {
-            using (var context = new ProjectDbContext())
+            try
             {
-                try
-                {
-                    var persons = context.Person.ToList();
-                    return persons;
-                }
-                catch (Exception ex)
-                {
-                    // Handle the exception (e.g., log it)
-                    throw new Exception("An error occurred while retrieving persons.", ex);
-                }
-                finally
-                {
-                    // Ensure the context is disposed of properly
-                    context.Dispose();
-                }
+                using var context = new ProjectDbContext();
+
+                return context.Person.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "An error occurred while retrieving persons.", ex);
             }
         }
+
         #endregion
     }
 }
