@@ -1,9 +1,12 @@
 namespace View
 {
+    /// <summary>
+    /// Defines the application entry point and initializes the main window.
+    /// </summary>
     internal static class Program
     {
         /// <summary>
-        ///  The main entry point for the application.
+        /// Starts the Windows Forms application.
         /// </summary>
         [STAThread]
         static void Main()

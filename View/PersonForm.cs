@@ -5,16 +5,25 @@ using View.Helpers;
 
 namespace View
 {
+    /// <summary>
+    /// Provides the user interface for creating, editing, viewing, and deleting people.
+    /// </summary>
     public partial class PersonForm : Form
     {
+        /// <summary>Application service used to persist person data.</summary>
         private readonly PersonServiceApplication _personApplicationService;
 
-        // null = adding a new person, otherwise = id of the person being edited
+        /// <summary>Contains the identifier of the person being edited, or null for a new person.</summary>
         private int? _editingId;
 
+        /// <summary>Color used for edit actions in the data grid.</summary>
         private static readonly Color EditColor = Color.FromArgb(37, 99, 235);
+        /// <summary>Color used for delete actions in the data grid.</summary>
         private static readonly Color DeleteColor = Color.FromArgb(220, 38, 38);
 
+        /// <summary>
+        /// Initializes the person form, input validation, and data grid behavior.
+        /// </summary>
         public PersonForm()
         {
             InitializeComponent();
@@ -25,6 +34,7 @@ namespace View
             _personApplicationService = new PersonServiceApplication();
         }
 
+        /// <summary>Loads people when the form is displayed.</summary>
         private void Form1_Load(object? sender, EventArgs e)
         {
             LoadData();
@@ -32,17 +42,20 @@ namespace View
 
         #region [- Buttons -]
 
+        /// <summary>Closes the form and returns to the main window.</summary>
         private void btnBack_Click(object? sender, EventArgs e)
         {
             Close(); // later this returns to the main page
         }
 
+        /// <summary>Clears the current input and reloads people.</summary>
         private void btnRefresh_Click(object? sender, EventArgs e)
         {
             ClearInputs();
             LoadData();
         }
 
+        /// <summary>Validates and saves a new person or updates the selected person.</summary>
         private void btnSave_Click(object? sender, EventArgs e)
         {
             var nationalId = txtNationalId.Text;
@@ -93,6 +106,7 @@ namespace View
 
         #region [- Grid -]
 
+        /// <summary>Starts editing or deletion when an action cell is clicked.</summary>
         private void dgvPerson_CellClick(object? sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
@@ -102,7 +116,7 @@ namespace View
             else if (e.ColumnIndex == colDelete.Index) DeletePerson(person);
         }
 
-        // Draws the edit / delete icons inside the cells
+        /// <summary>Draws edit and delete icons inside the corresponding grid cells.</summary>
         private void dgvPerson_CellPainting(object? sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
@@ -123,6 +137,7 @@ namespace View
             e.Handled = true;
         }
 
+        /// <summary>Displays a hand cursor when the pointer enters an action cell.</summary>
         private void dgvPerson_CellMouseEnter(object? sender, DataGridViewCellEventArgs e)
         {
             bool isAction = e.RowIndex >= 0 &&
@@ -130,11 +145,13 @@ namespace View
             dgvPerson.Cursor = isAction ? Cursors.Hand : Cursors.Default;
         }
 
+        /// <summary>Restores the default cursor when the pointer leaves a grid cell.</summary>
         private void dgvPerson_CellMouseLeave(object? sender, DataGridViewCellEventArgs e)
         {
             dgvPerson.Cursor = Cursors.Default;
         }
 
+        /// <summary>Applies action tooltips and clears the grid selection after binding.</summary>
         private void dgvPerson_DataBindingComplete(object? sender, DataGridViewBindingCompleteEventArgs e)
         {
             foreach (DataGridViewRow row in dgvPerson.Rows)
@@ -148,6 +165,7 @@ namespace View
 
         #region [- Helpers -]
 
+        /// <summary>Loads all people into the data grid.</summary>
         private void LoadData()
         {
             try
@@ -160,6 +178,8 @@ namespace View
             }
         }
 
+        /// <summary>Copies a person's values into the input controls for editing.</summary>
+        /// <param name="person">The person selected for editing.</param>
         private void StartEdit(GetPersonDto person)
         {
             _editingId = person.Id;
@@ -170,6 +190,8 @@ namespace View
             txtNationalId.Focus();
         }
 
+        /// <summary>Confirms and deletes a person.</summary>
+        /// <param name="person">The person selected for deletion.</param>
         private void DeletePerson(GetPersonDto person)
         {
             var answer = MessageBox.Show($"Delete {person.FirstName} {person.LastName}?", "Confirm delete",
@@ -189,6 +211,7 @@ namespace View
             }
         }
 
+        /// <summary>Resets the form to new-person entry mode.</summary>
         private void ClearInputs()
         {
             _editingId = null;
@@ -198,6 +221,8 @@ namespace View
             btnSave.Text = "Save";
         }
 
+        /// <summary>Displays an exception message and its base exception message.</summary>
+        /// <param name="ex">The exception to display.</param>
         private static void ShowError(Exception ex)
         {
             var baseMessage = ex.GetBaseException().Message;

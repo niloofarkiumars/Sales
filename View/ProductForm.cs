@@ -5,16 +5,25 @@ using System.Globalization;
 
 namespace View
 {
+    /// <summary>
+    /// Provides the user interface for creating, editing, viewing, and deleting products.
+    /// </summary>
     public partial class ProductForm : Form
     {
+        /// <summary>Application service used to persist product data.</summary>
         private readonly ProductServiceApplication _productServiceApplication;
 
-        // null = adding a new product, otherwise = id of the product being edited
+        /// <summary>Contains the identifier of the product being edited, or null for a new product.</summary>
         private int? _editingId;
 
+        /// <summary>Color used for edit actions in the data grid.</summary>
         private static readonly Color EditColor = Color.FromArgb(37, 99, 235);
+        /// <summary>Color used for delete actions in the data grid.</summary>
         private static readonly Color DeleteColor = Color.FromArgb(220, 38, 38);
 
+        /// <summary>
+        /// Initializes the product form, input validation, and data grid behavior.
+        /// </summary>
         public ProductForm()
         {
             InitializeComponent();
@@ -24,6 +33,7 @@ namespace View
             _productServiceApplication = new ProductServiceApplication();
         }
 
+        /// <summary>Loads products when the form is displayed.</summary>
         private void ProductForm_Load(object? sender, EventArgs e)
         {
             LoadData();
@@ -31,17 +41,20 @@ namespace View
 
         #region [- Buttons -]
 
+        /// <summary>Closes the form and returns to the main window.</summary>
         private void btnBack_Click(object? sender, EventArgs e)
         {
             Close(); // later this returns to the main page
         }
 
+        /// <summary>Clears the current input and reloads products.</summary>
         private void btnRefresh_Click(object? sender, EventArgs e)
         {
             ClearInputs();
             LoadData();
         }
 
+        /// <summary>Validates and saves a new product or updates the selected product.</summary>
         private void btnSave_Click(object? sender, EventArgs e)
         {
             var code = txtCode.Text.Trim();
@@ -108,6 +121,7 @@ namespace View
 
         #region [- Grid -]
 
+        /// <summary>Starts editing or deletion when an action cell is clicked.</summary>
         private void dgvProduct_CellClick(object? sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
@@ -117,7 +131,7 @@ namespace View
             else if (e.ColumnIndex == colDelete.Index) DeleteProduct(product);
         }
 
-        // Draws the edit / delete icons inside the cells
+        /// <summary>Draws edit and delete icons inside the corresponding grid cells.</summary>
         private void dgvProduct_CellPainting(object? sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
@@ -138,6 +152,7 @@ namespace View
             e.Handled = true;
         }
 
+        /// <summary>Displays a hand cursor when the pointer enters an action cell.</summary>
         private void dgvProduct_CellMouseEnter(object? sender, DataGridViewCellEventArgs e)
         {
             bool isAction = e.RowIndex >= 0 &&
@@ -145,11 +160,13 @@ namespace View
             dgvProduct.Cursor = isAction ? Cursors.Hand : Cursors.Default;
         }
 
+        /// <summary>Restores the default cursor when the pointer leaves a grid cell.</summary>
         private void dgvProduct_CellMouseLeave(object? sender, DataGridViewCellEventArgs e)
         {
             dgvProduct.Cursor = Cursors.Default;
         }
 
+        /// <summary>Applies action tooltips and clears the grid selection after binding.</summary>
         private void dgvProduct_DataBindingComplete(object? sender, DataGridViewBindingCompleteEventArgs e)
         {
             foreach (DataGridViewRow row in dgvProduct.Rows)
@@ -163,6 +180,7 @@ namespace View
 
         #region [- Helpers -]
 
+        /// <summary>Loads all products into the data grid.</summary>
         private void LoadData()
         {
             try
@@ -175,6 +193,8 @@ namespace View
             }
         }
 
+        /// <summary>Copies a product's values into the input controls for editing.</summary>
+        /// <param name="product">The product selected for editing.</param>
         private void StartEdit(GetProductDto product)
         {
             _editingId = product.Id;
@@ -186,6 +206,8 @@ namespace View
             txtCode.Focus();
         }
 
+        /// <summary>Confirms and deletes a product.</summary>
+        /// <param name="product">The product selected for deletion.</param>
         private void DeleteProduct(GetProductDto product)
         {
             var answer = MessageBox.Show($"Delete product {product.Title}?", "Confirm delete",
@@ -205,6 +227,7 @@ namespace View
             }
         }
 
+        /// <summary>Resets the form to new-product entry mode.</summary>
         private void ClearInputs()
         {
             _editingId = null;
@@ -215,6 +238,8 @@ namespace View
             btnSave.Text = "Save";
         }
 
+        /// <summary>Displays an exception message and its base exception message.</summary>
+        /// <param name="ex">The exception to display.</param>
         private static void ShowError(Exception ex)
         {
             var baseMessage = ex.GetBaseException().Message;

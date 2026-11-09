@@ -9,8 +9,10 @@ namespace View.Helpers
     public static class InputValidationHelper
     {
         /// <summary>
-        /// Allows only English digits and control characters.
+        /// Allows only English digits and control characters in a text box.
         /// </summary>
+        /// <param name="sender">The control that raised the event.</param>
+        /// <param name="e">The key press event being validated.</param>
         public static void AllowDigitsOnly(
             object? sender, KeyPressEventArgs e)
         {
@@ -22,6 +24,8 @@ namespace View.Helpers
         /// <summary>
         /// Allows English digits and one decimal separator.
         /// </summary>
+        /// <param name="sender">The control that raised the event.</param>
+        /// <param name="e">The key press event being validated.</param>
         public static void AllowDecimal(
             object? sender, KeyPressEventArgs e)
         {
@@ -46,8 +50,13 @@ namespace View.Helpers
                 !(isDecimalSeparator && !alreadyHasSeparator);
         }
 
+        /// <summary>
+        /// Allows letters, spaces, dots, and control characters in a text box.
+        /// </summary>
+        /// <param name="sender">The control that raised the event.</param>
+        /// <param name="e">The key press event being validated.</param>
         public static void AllowLettersSpacesAndDots(
-    object? sender, KeyPressEventArgs e)
+            object? sender, KeyPressEventArgs e)
         {
             if (char.IsControl(e.KeyChar))
                 return;
